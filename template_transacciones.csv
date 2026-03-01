@@ -1,0 +1,9 @@
+fecha,tipo,categoria,monto_bob,moneda,nota
+2024-01-01,Ingreso,Salario,9500.00,BOB,Salario enero
+2024-01-05,Gasto,Alimentación,1800.00,BOB,Supermercado + mercado
+2024-01-07,Gasto,Alquiler,2500.00,BOB,Alquiler mensual
+2024-01-10,Gasto,Transporte,600.00,BOB,Gasolina + micros
+2024-01-15,Gasto,Servicios,450.00,BOB,Luz, agua, internet, celular
+2024-01-20,Gasto,Educación,800.00,BOB,Universidad / cursos
+2024-01-25,Gasto,Entretenimiento,400.00,BOB,Salidas, streaming
+2024-01-28,Gasto,Ahorro USD,500.00,BOB,Compra dólares TC paralelo
