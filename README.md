@@ -9,14 +9,14 @@
 
 ## Qué hace
 
-- `app.py`: dashboard Streamlit. Lee `datos/transacciones.csv` (si no existe, usa datos demo generados en código), muestra KPIs de ingresos, gastos y ahorro, flujo mensual, distribución de gastos, y filtros por año, tipo y categoría. El tipo de cambio paralelo (BOB/USD) se ingresa en la barra lateral.
+- `app.py`: dashboard Streamlit. Lee `datos/transacciones.csv` con las columnas `fecha`, `tipo`, `categoria`, `monto_bob`, `moneda` y `nota`. Si el archivo no existe, usa datos demo generados en código (semilla 42). Muestra KPIs de ingresos, gastos y ahorro, flujo mensual, distribución de gastos y filtros por año, tipo y categoría. El tipo de cambio paralelo (BOB/USD) se ingresa en la barra lateral.
 - Proyección Monte Carlo: simula 12 meses de ingreso y gasto con distribución normal alrededor de un valor base y reporta P10, P50 y P90 del ahorro acumulado. Número de simulaciones seleccionable (1000, 5000 o 10000).
-- `generar_datos_demo.py`: genera transacciones sintéticas de un año (semilla por defecto 42).
-- `template_transacciones.csv`: plantilla con cabecera y filas de ejemplo.
+- `generar_datos_demo.py`: genera transacciones sintéticas de un año con `--anio`, `--ingreso` y `--semilla`.
+- `template_transacciones.csv`: plantilla con la cabecera que usa `app.py` y 7 filas de ejemplo.
 
 ## Stack
 
-Python, Streamlit, `pandas`, `numpy`, `matplotlib`.
+Python. Librerías importadas: `streamlit`, `pandas`, `numpy`, `matplotlib`, y `json`/`os`/`datetime` de la biblioteca estándar.
 
 ## Estructura
 
@@ -59,7 +59,7 @@ El dashboard abre en `http://localhost:8501`.
 2. Completa las filas con tus transacciones (puedes exportarlas desde tu banco).
 3. Ejecuta `streamlit run app.py`.
 
-Formato del CSV (cabecera de la plantilla):
+Formato del CSV (cabecera de la plantilla, igual a la que lee `app.py`):
 
 | Campo | Tipo | Ejemplo |
 |---|---|---|
@@ -70,15 +70,17 @@ Formato del CSV (cabecera de la plantilla):
 | `moneda` | BOB / USD | BOB |
 | `nota` | Texto libre | Supermercado |
 
-Sin verificar: que `app.py` acepte exactamente estos nombres de columna en todos sus flujos. Revisar con la plantilla antes de usar datos reales.
-
 ## Variables de entorno (solo nombres)
 
 Ninguna. No hay `.env.example`.
 
 ## Pruebas y CI
 
-Sin pruebas automatizadas ni workflows de CI en el repo.
+- Sin pruebas automatizadas ni workflows de CI en el repo.
+
+### Resultados
+
+- No hay cifras de resultados en el README. La proyección Monte Carlo depende de los datos cargados y de la semilla; no hay salidas guardadas en el repo. Resultados no verificables en el repo.
 
 ## Despliegue
 
@@ -95,7 +97,7 @@ No aplica (herramienta personal, sin venta). Precios y planes: fuente única `Va
 ## Seguridad, privacidad y derechos
 
 - Los datos de transacciones son personales: `datos/` no debe subirse a un repo público. Este repo no incluye `.gitignore` que lo excluya; agregarlo antes de usar datos reales.
-- Los datos de demostración son sintéticos (generados por `generar_datos_demo.py`).
+- Los datos de demostración son sintéticos (generados por `generar_datos_demo.py` o por `app.py`).
 - Licencia: el repo no tiene archivo LICENSE; no hay derechos de reutilización declarados.
 
 ## Convenciones de trabajo
