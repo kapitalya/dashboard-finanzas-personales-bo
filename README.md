@@ -1,107 +1,65 @@
-# 💰 Dashboard de Finanzas Personales — Bolivia
+# Dashboard de finanzas personales — Bolivia
 
-![Python](https://img.shields.io/badge/Python-3.10-3776AB?style=flat&logo=python&logoColor=white)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.32-FF4B4B?style=flat&logo=streamlit&logoColor=white)
-![pandas](https://img.shields.io/badge/pandas-2.1-150458?style=flat&logo=pandas&logoColor=white)
-![Status](https://img.shields.io/badge/Estado-Activo-brightgreen)
+> Aplicación Streamlit para registrar ingresos y gastos en BOB y USD, ver el flujo mensual y proyectar el ahorro con Monte Carlo. Para uso personal y como ejemplo de análisis de datos financieros.
 
-Dashboard interactivo de finanzas personales diseñado para el contexto boliviano. Incluye conversión automática al tipo de cambio paralelo, proyección de ahorro con simulación Monte Carlo y alertas financieras personalizadas.
+**Estado (2026-11-17):** PARCIAL — código completo (`app.py`, generador de datos demo, plantilla CSV); no ejecutado en este corte; falta `requirements.txt`, `.gitignore` y licencia; las rutas del README anterior no coincidían con el repo (corregidas aquí).
+**Repo:** kapitalya/dashboard-finanzas-personales-bo · **Rama por defecto:** main · **Alias/nombres anteriores:** ninguno
 
----
+> Aviso: análisis educativo, no es consejo financiero. La simulación Monte Carlo usa supuestos normales simplificados; no predice tu ahorro real.
 
-## 🎯 Por Qué Este Dashboard Es Diferente
+## Qué hace
 
-Los dashboards financieros genéricos no contemplan la realidad boliviana:
-- **Doble moneda:** Los bolivianos manejan BOB y USD simultáneamente
-- **Tipo de cambio paralelo:** Divergente del oficial desde 2022
-- **Aguinaldo:** Ingresos extraordinarios en junio y diciembre
-- **Prima cambiaria:** Impacto real en el poder adquisitivo
+- `app.py`: dashboard Streamlit. Lee `datos/transacciones.csv` con las columnas `fecha`, `tipo`, `categoria`, `monto_bob`, `moneda` y `nota`. Si el archivo no existe, usa datos demo generados en código (semilla 42). Muestra KPIs de ingresos, gastos y ahorro, flujo mensual, distribución de gastos y filtros por año, tipo y categoría. El tipo de cambio paralelo (BOB/USD) se ingresa en la barra lateral.
+- Proyección Monte Carlo: simula 12 meses de ingreso y gasto con distribución normal alrededor de un valor base y reporta P10, P50 y P90 del ahorro acumulado. Número de simulaciones seleccionable (1000, 5000 o 10000).
+- `generar_datos_demo.py`: genera transacciones sintéticas de un año con `--anio`, `--ingreso` y `--semilla`.
+- `template_transacciones.csv`: plantilla con la cabecera que usa `app.py` y 7 filas de ejemplo.
 
-Este dashboard incorpora esas particularidades nativamente.
+## Stack
 
----
+Python. Librerías importadas: `streamlit`, `pandas`, `numpy`, `matplotlib`, y `json`/`os`/`datetime` de la biblioteca estándar.
 
-## 🖥️ Funcionalidades
-
-| Módulo | Descripción |
-|---|---|
-| **KPIs en tiempo real** | Ingresos, gastos, ahorro neto, tasa de ahorro vs meta |
-| **Conversión automática** | BOB ↔ USD al tipo de cambio paralelo configurable |
-| **Alertas financieras** | Detecta si estás por debajo de tu meta de ahorro |
-| **Flujo mensual** | Gráfica de barras ingresos/gastos/ahorro por mes |
-| **Distribución de gastos** | Pie chart por categoría |
-| **Monte Carlo** | Proyección de ahorro a 12 meses con P10/P50/P90 |
-| **Filtros interactivos** | Por período, tipo y categoría |
-
----
-
-## 📐 La Simulación Monte Carlo
-
-El módulo de proyección genera N simulaciones de tus próximos 12 meses asumiendo que tus ingresos y gastos siguen distribuciones normales alrededor de tu promedio histórico.
-
-```python
-for simulacion in range(N):
-    for mes in range(12):
-        ingreso = Normal(ingreso_base, sigma_ingreso)
-        gasto   = Normal(gasto_base,   sigma_gasto)
-        ahorro_acumulado[mes] += max(0, ingreso - gasto)
-
-# Resultado: distribución de ahorros posibles
-P10 = escenario_pesimista   # 10% de simulaciones están por debajo
-P50 = escenario_base        # mediana
-P90 = escenario_optimista   # 10% de simulaciones están por encima
-```
-
-Esto da rangos honestos en lugar de una proyección lineal que asume que todo saldrá perfecto.
-
----
-
-## 📁 Estructura
+## Estructura
 
 ```
 dashboard-finanzas-personales-bo/
-├── app.py                          # Dashboard Streamlit principal
-├── src/
-│   └── generar_datos_demo.py       # Generador de datos de ejemplo
-├── datos/
-│   └── template_transacciones.csv  # Plantilla para tus propios datos
-├── requirements.txt
-├── .gitignore
+├── app.py                        # Dashboard Streamlit
+├── generar_datos_demo.py         # Generador de datos sintéticos (en la raíz, no en src/)
+├── template_transacciones.csv    # Plantilla de transacciones (en la raíz, no en datos/)
 └── README.md
 ```
 
----
+`datos/` no existe en el repo: lo crea `generar_datos_demo.py` al ejecutarse, o el usuario al copiar sus transacciones.
 
-## ⚙️ Instalación y Uso
+## Instalación y uso
 
 ```bash
-git clone https://github.com/Serius69/dashboard-finanzas-personales-bo
+git clone https://github.com/kapitalya/dashboard-finanzas-personales-bo
 cd dashboard-finanzas-personales-bo
 
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
+python -m venv venv && source venv/bin/activate   # Windows: venv\Scripts\activate
+pip install streamlit pandas numpy matplotlib     # sin requirements.txt: versiones sin fijar
 
-# Opción A: ver con datos de demostración
+# Opción A: ver el dashboard con datos de demostración
 streamlit run app.py
 
 # Opción B: generar datos de ejemplo primero
-python src/generar_datos_demo.py --anio 2024 --ingreso 9500
+python generar_datos_demo.py --anio 2024 --ingreso 9500 --semilla 42
+mkdir -p datos
 cp datos/transacciones_2024.csv datos/transacciones.csv
 streamlit run app.py
 ```
 
-El dashboard abre en `http://localhost:8501`
+Argumentos de `generar_datos_demo.py`: `--anio` (2024), `--ingreso` (ingreso base mensual en BOB, 9500), `--semilla` (42). El archivo generado es `datos/transacciones_<anio>.csv`.
 
----
+El dashboard abre en `http://localhost:8501`.
 
-## 📊 Cómo Usar con Tus Datos Reales
+## Cómo usar tus datos reales
 
-1. Copia `datos/template_transacciones.csv`
-2. Completa con tus transacciones reales (puedes exportar desde tu banco)
-3. Guarda como `datos/transacciones.csv`
-4. Lanza `streamlit run app.py`
+1. Copia `template_transacciones.csv` a `datos/transacciones.csv` (crea `datos/` antes).
+2. Completa las filas con tus transacciones (puedes exportarlas desde tu banco).
+3. Ejecuta `streamlit run app.py`.
 
-**Formato del CSV:**
+Formato del CSV (cabecera de la plantilla, igual a la que lee `app.py`):
 
 | Campo | Tipo | Ejemplo |
 |---|---|---|
@@ -112,16 +70,36 @@ El dashboard abre en `http://localhost:8501`
 | `moneda` | BOB / USD | BOB |
 | `nota` | Texto libre | Supermercado |
 
----
+## Variables de entorno (solo nombres)
 
-## 🔗 Proyectos Relacionados
+Ninguna. No hay `.env.example`.
 
-- [💱 Dólar Paralelo Bolivia — ARIMA](https://github.com/Serius69/dolar-paralelo-bolivia-arima) — Predicción del TC paralelo
-- [🇧🇴 Inflación Bolivia — SARIMA](https://github.com/Serius69/inflacion-bolivia-series-tiempo) — Contexto macroeconómico
-- [📈 Portafolio de Activos](https://github.com/Serius69/portafolio-acciones-bolivia) — Qué hacer con tus ahorros
+## Pruebas y CI
 
----
+- Sin pruebas automatizadas ni workflows de CI en el repo.
 
-## 👤 Autor
+### Resultados
 
-**Sergio** — Data Scientist en Finanzas | [github.com/Serius69](https://github.com/Serius69)
+- No hay cifras de resultados en el README. La proyección Monte Carlo depende de los datos cargados y de la semilla; no hay salidas guardadas en el repo. Resultados no verificables en el repo.
+
+## Despliegue
+
+No aplica: aplicación local. No hay configuración de despliegue en el repo.
+
+## Estado y relaciones
+
+- Repositorio independiente. El README anterior enlazaba repos de una cuenta personal fuera de la organización (`Serius69/*`); no auditados en este corte.
+
+## Precios y planes
+
+No aplica (herramienta personal, sin venta). Precios y planes: fuente única `Vault/EMPRESA/portafolio/PRECIOS-APROBADOS-20261108.md`.
+
+## Seguridad, privacidad y derechos
+
+- Los datos de transacciones son personales: `datos/` no debe subirse a un repo público. Este repo no incluye `.gitignore` que lo excluya; agregarlo antes de usar datos reales.
+- Los datos de demostración son sintéticos (generados por `generar_datos_demo.py` o por `app.py`).
+- Licencia: el repo no tiene archivo LICENSE; no hay derechos de reutilización declarados.
+
+## Convenciones de trabajo
+
+Cambios por rama `codex/*` y PR contra `main` (no hay rama `develop`). CI: no hay workflows configurados.
